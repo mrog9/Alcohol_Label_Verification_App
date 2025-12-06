@@ -25,6 +25,7 @@ def run_ocr(file_obj):
 def validate_form(brand, prod, alc, net, file):
 
     fail_str = ""
+    brand_nm_list = []
 
     if not brand:
 
