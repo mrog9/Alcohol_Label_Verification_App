@@ -18,9 +18,9 @@ def upload_file():
     net = request.form['net'].lower()
     file = request.files["file"]
     
-    comment_str, ocr_list = validate_labels(brand, prod, alc, net, file)
+    comment_str, text= validate_labels(brand, prod, alc, net, file)
 
-    return render_template("form.html", submission=comment_str, ocr_list = ocr_list)
+    return render_template("form.html", submission=comment_str, text = text)
 
 
 if __name__ == "__main__":

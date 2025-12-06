@@ -26,14 +26,11 @@
 
     <div>
 
-        {% if ocr_list %}
+        {% if text %}
         <h2>Text Detected</h2>
-        {% endif %}
+        <p>{{text}}</p>
 
-        <ul>
-            {% for item in ocr_list %}
-                <li>{{item}}</li>
-            {% endfor %}
+        {% endif %}
         </ul>
     </div>
 

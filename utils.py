@@ -87,6 +87,6 @@ def validate_labels(brand, prod, alc, net, file):
 
             fail_str = fail_str + " File must be in appropriate format"
 
-    return fail_str
+    return fail_str, text
 
 
