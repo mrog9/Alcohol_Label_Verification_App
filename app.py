@@ -13,7 +13,7 @@ def upload_file():
             payload = {"apikey": "K81796487388957", "language": "eng"}
             response = requests.post(url_api, data=payload, files={"file": file})
             result = response.json()
-            return result["ParsedResults"][0]["ParsedText"]
+            return result
     return render_template("form.html")
 
 if __name__ == "__main__":
