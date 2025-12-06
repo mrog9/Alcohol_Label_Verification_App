@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Page</title>
+    <title>Upload to OCR</title>
 </head>
 <body>
-    <h1>Hello, world!</h1>
-    <p>This is my first HTML page.</p>
+    <h1>Upload an image for OCR</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
 </body>
 </html>
