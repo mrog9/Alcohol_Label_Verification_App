@@ -1,26 +1,17 @@
 import numpy as np
-import cv2
-import easyocr
+from PIL import Image
+import io
+import pytesseract
 
 def run_ocr(file_obj):
     
-    file_bytes = np.frombuffer(file_obj.read(), np.uint8)
+    img = Image.open(io.BytesIO(file_obj.read()))
 
-    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    text = pytesseract.image_to_string(img)
 
-    reader = easyocr.Reader(['en'])
+    joined_chars = "".join(text).lower()
 
-    results = reader.readtext(image)
-
-    text_list = []
-
-    for (bbox, text, confidence) in results:
-        
-        text_list.append(text)
-
-    joined_chars = "".join(text_list).lower()
-
-    return joined_chars, text_list
+    return joined_chars, text
 
 def validate_form(brand, prod, alc, net, file):
 

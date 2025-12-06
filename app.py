@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template
-from PIL import Image
 from utils import *
 
 app = Flask(__name__)
