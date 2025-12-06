@@ -85,7 +85,7 @@ def validate_labels(brand, prod, alc, net, file):
         
         except Exception as e:
 
-            fail_str = fail_str + e
+            fail_str = fail_str + str(e)
 
     return fail_str, text
 
