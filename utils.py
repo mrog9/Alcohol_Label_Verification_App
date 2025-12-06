@@ -11,7 +11,7 @@ def run_ocr(file_obj):
 
     joined_chars = "".join(text).lower()
 
-    return joined_chars, text
+    return joined_chars
 
 def validate_form(brand, prod, alc, net, file):
 
@@ -41,13 +41,12 @@ def validate_labels(brand, prod, alc, net, file):
 
     fail_str, brand_nm_list = validate_form(brand, prod, alc, net, file)
     text = ""
-    ocr_list = []
 
     if not fail_str:
 
         try:
 
-            text, ocr_list = run_ocr(file)
+            text = run_ocr(file)
 
             flag = False
 
@@ -83,6 +82,6 @@ def validate_labels(brand, prod, alc, net, file):
 
             fail_str = fail_str + " File must be in appropriate format"
 
-    return fail_str, ocr_list
+    return fail_str
 
 
