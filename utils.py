@@ -1,4 +1,3 @@
-import numpy as np
 from PIL import Image
 import io
 import pytesseract
@@ -24,7 +23,13 @@ def validate_form(brand, prod, alc, net, file):
 
     else:
 
-        brand_nm_list = brand.split(" ")
+        if len(brand.split(" ")) > 1:
+
+            brand_nm_list = brand.split(" ")
+
+        else:
+
+            brand_nm_list.append(brand)
 
     if not prod:
 
