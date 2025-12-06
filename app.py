@@ -1,21 +1,31 @@
 from flask import Flask, request, render_template
-import requests
+from PIL import Image
+from utils import *
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET", "POST"])
-def upload_file():
-    if request.method == "POST":
-        file = request.files["file"]  # get uploaded file
-        if file:
 
-            # url_api = "https://api.ocr.space/parse/image"
-            # payload = {"apikey": "K81796487388957", "language": "eng"}
-            # response = requests.post(url_api, data=payload, files={"file": file})
-            # result = response.json()
-            return str(file)
+@app.route("/")
+def index():
+
     return render_template("form.html")
+
+@app.route("/upload", methods=["POST"])
+def upload_file():
+
+    brand = request.form['brand'].lower()
+    prod = request.form['product'].lower()
+    alc = request.form['content'].lower()
+    net = request.form['net'].lower()
+    file = request.files["file"]
+    
+    comment_str, ocr_list = validate_labels(brand, prod, alc, net, file)
+
+    return render_template("form.html", submission=comment_str, ocr_list = ocr_list)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
 
