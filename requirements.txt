@@ -1,5 +1,5 @@
 gunicorn
-opencv-python-headless
+opencv-python
 numpy
 paddleocr
 paddlepaddle
