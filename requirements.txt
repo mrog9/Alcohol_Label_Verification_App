@@ -1,5 +1,5 @@
 gunicorn
-numpy==2.24.4
-paddleocr==2.7.0.3
-paddlepaddle==2.6.1
-flask==3.0.3
+numpy
+paddleocr
+paddlepaddle
+flask
