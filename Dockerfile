@@ -3,7 +3,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-RUN pip uninstall -y opencv-python opencv-contrib-python || true
+# Source - https://stackoverflow.com/a
+# Posted by Awanish Kumar Golwara
+# Retrieved 2025-12-07, License - CC BY-SA 4.0
+
+RUN apt-get update && apt-get install libgl1
+
 
 # Copy requirements and install
 COPY requirements.txt .
