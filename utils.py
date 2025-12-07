@@ -1,16 +1,22 @@
-from PIL import Image
+from PIL import Image, ImageFilter, ImageEnhance
 import io
 import pytesseract
 
-def run_ocr(file_obj):
+def run_ocr(file_obj, lang="eng"):
+    # Load image from file object
+    img = Image.open(io.BytesIO(file_obj.read())).convert("L")  # grayscale
     
-    img = Image.open(io.BytesIO(file_obj.read()))
+    # Optional preprocessing
+    img = img.filter(ImageFilter.SHARPEN)
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(2)
 
-    text = pytesseract.image_to_string(img)
+    # Run OCR
+    text = pytesseract.image_to_string(img, lang=lang)
 
-    joined_chars = "".join(text).lower()
-
-    return joined_chars
+    # Normalize output
+    cleaned_text = text.strip().lower()
+    return cleaned_text
 
 def validate_form(brand, prod, alc, net, file):
 
