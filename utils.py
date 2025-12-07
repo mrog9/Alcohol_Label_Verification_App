@@ -13,7 +13,7 @@ def run_ocr(file_obj):
     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
     # Run OCR
-    results = ocr.ocr(image, det=True, rec=True)
+    results = ocr.ocr(image)
 
     # Extract text
     text = " ".join([line[1][0] for line in results[0]])
