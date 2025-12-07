@@ -1,5 +1,5 @@
 # Use a slim Python base image
-FROM python
+FROM python:3.11
 
 WORKDIR /app
 
