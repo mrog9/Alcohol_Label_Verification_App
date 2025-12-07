@@ -1,30 +1,29 @@
 import io
 import numpy as np
 from PIL import Image, ImageFilter, ImageEnhance
-from paddleocr import PaddleOCR
+import easyocr
 
-# Initialize PaddleOCR once (English only, CPU)
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
+# Initialize EasyOCR reader once (outside the function for efficiency)
+reader = easyocr.Reader(['en'])  # only English model
 
-def run_ocr(file_obj):
-
-    # Load image with Pillow
-    img = Image.open(io.BytesIO(file_obj.read())).convert("RGB")
-
+def run_ocr(file_obj, lang="en"):
+    # Load image from file object
+    img = Image.open(io.BytesIO(file_obj.read())).convert("L")  # grayscale
+    
     # Optional preprocessing
     img = img.filter(ImageFilter.SHARPEN)
     enhancer = ImageEnhance.Contrast(img)
     img = enhancer.enhance(2)
 
-    img_array = np.array(img)   # Pillow → NumPy
+    # Run OCR with EasyOCR
+    results = reader.readtext(img)
 
-    # Run OCR
-    results = ocr.ocr(img_array, cls=True)
+    # Extract text from results (list of [bbox, text, confidence])
+    text = " ".join([res[1] for res in results])
 
-    # Extract text
-    text = " ".join([line[1][0] for line in results[0]])
-
-    return text
+    # Normalize output
+    cleaned_text = text.strip().lower()
+    return cleaned_text
 
 def validate_form(brand, prod, alc, net, file):
 
