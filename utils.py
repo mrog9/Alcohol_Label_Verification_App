@@ -2,8 +2,6 @@ from PIL import Image
 import io
 import pytesseract
 
-pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
-
 def run_ocr(file_obj):
     
     img = Image.open(io.BytesIO(file_obj.read()))
