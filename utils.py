@@ -1,8 +1,11 @@
-from PIL import Image, ImageFilter, ImageEnhance
 import io
-import pytesseract
+from PIL import Image, ImageFilter, ImageEnhance
+import easyocr
 
-def run_ocr(file_obj, lang="eng"):
+# Initialize EasyOCR reader once (outside the function for efficiency)
+reader = easyocr.Reader(['en'])  # only English model
+
+def run_ocr(file_obj, lang="en"):
     # Load image from file object
     img = Image.open(io.BytesIO(file_obj.read())).convert("L")  # grayscale
     
@@ -11,8 +14,11 @@ def run_ocr(file_obj, lang="eng"):
     enhancer = ImageEnhance.Contrast(img)
     img = enhancer.enhance(2)
 
-    # Run OCR
-    text = pytesseract.image_to_string(img, lang=lang)
+    # Run OCR with EasyOCR
+    results = reader.readtext(img)
+
+    # Extract text from results (list of [bbox, text, confidence])
+    text = " ".join([res[1] for res in results])
 
     # Normalize output
     cleaned_text = text.strip().lower()
