@@ -4,10 +4,16 @@ import os
 
 app = Flask(__name__)
 
+# "home" page
+
 @app.route("/")
 def index():
 
     return render_template("form.html")
+
+# when file is uploaded, the form is validated. Then, it is checked if any text
+# was detected from image. If not a comment is added. Then, the label is validated
+# with the form. The homepage is rendered with the extracted text and comment included
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():

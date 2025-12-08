@@ -2,6 +2,9 @@ import pytesseract
 import io
 from PIL import Image
 
+# this method is to make sure the form fields are not empty. It goes through 
+# each field and adds to the comment string if it is empty and returns the string.
+
 def validate_form_input(b, p, a, n, f):
 
     comment = ""
@@ -27,6 +30,12 @@ def validate_form_input(b, p, a, n, f):
         comment += "A file was not uploaded."
 
     return comment
+
+# this method recieves the uploaded file, reads it and then sends to pillow object
+# to process it. It is put in a "try" so that if it fails for it not being in the
+# correct format then a comment will be added telling the user it has to be in a certain format.
+# if its successful, then the image is converted to gray scale and is upscaled before 
+# pytesseract extracts text from the image. The text and comment is then returned.
 
 def get_text_from_image(file_obj):
 
@@ -54,6 +63,12 @@ def get_text_from_image(file_obj):
         text = pytesseract.image_to_string(img)
 
     return text, comment
+
+# this method is going through each part of the text and assigning it to an appropriate field.
+# there were many assumptions being made about the image being uploaded. It has to follow a specific
+# pattern for this method to work correctly. Brand name is in all caps. Product name is follows and
+# is before any number. Alcohol percentage precedes % symbol. Net contents is after everything else 
+# and precedes "word" with L or mL in it. 
 
 def extract_objs_from_text(text):
 
@@ -115,7 +130,10 @@ def extract_objs_from_text(text):
 
     return brand_on_label, prod_on_label, alc_percent, net_contents
 
-
+# this method validates the label. It uses the fields for the label extracted by
+# the method above and compares with the fields on the form. Any mismatches will 
+# be added to the comment string. If it gets through without any mismatches then it
+# will output SUCCESS!
 
 def validate_label(text, b, p, a, n):
 
