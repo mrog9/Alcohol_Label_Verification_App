@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from utils import *
+import os
 
 app = Flask(__name__)
 
@@ -39,4 +40,5 @@ def upload_file():
     return render_template("form.html", text = text, comment = comment)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port)
