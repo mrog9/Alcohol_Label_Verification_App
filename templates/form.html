@@ -19,21 +19,20 @@
     </form>
 
     <div>
-    {% if submission %}
-    <p>{{submission}}</p>
+    {% if comment %}
+    <p>{{comment}}</p>
     {% endif %}
     </div>
 
-    <div>
 
-        {% if text %}
-        <h2>Text Detected</h2>
-        <p>{{text}}</p>
+  <div>
 
-        {% endif %}
-        </ul>
-    </div>
+    {% if text%}
+    <h2>Text Extracted From Image</h2>
+    <p>{{text}}</p>
+    {% endif %}
 
+  </div>
 
 </body>
 </html>

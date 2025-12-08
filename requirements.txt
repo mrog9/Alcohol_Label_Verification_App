@@ -1,6 +1,4 @@
 gunicorn
-opencv-python-headless
-numpy
-paddleocr
-paddlepaddle
 flask
+pytesseract
+pillow

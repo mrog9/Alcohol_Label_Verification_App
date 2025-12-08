@@ -1,100 +1,150 @@
+import pytesseract
 import io
-import numpy as np
-import cv2
-from paddleocr import PaddleOCR
+from PIL import Image
 
-# Initialize PaddleOCR once (English only, CPU)
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
+pytesseract.pytesseract.tesseract_cmd = r"C:/Program Files/Tesseract-OCR/tesseract.exe"
 
-def run_ocr(file_obj):
+def validate_form_input(b, p, a, n, f):
+
+    comment = ""
+
+    if not b:
+
+        comment += "Brand name was not given.\n"
+
+    if not p:
+
+        comment += "Product type was not given.\n"
+
+    if not a:
+
+        comment += "Alcohol percentage was not given.\n"
+
+    if not n:
+
+        comment += "Net contents were not given.\n"
+
+    if not f:
+
+        comment += "A file was not uploaded."
+
+    return comment
+
+def get_text_from_image(file_obj):
+
+    fail_flag = False
+    comment = ""
+    text = ""
+
+    img_bytes = file_obj.read()
+
+    try:
+
+        img = Image.open(io.BytesIO(img_bytes))
+
+    except Exception as e:
+
+        comment = "Make sure image is in either jpg, png, gif, bmp, tiff, webp, ico format."
+        fail_flag = True
+
+    if not fail_flag:
+
+        img = img.convert("L")  # grayscale
+        img = img.resize((img.width * 2, img.height * 2))  # upscale
+
+        # OCR with PyTesseract
+        text = pytesseract.image_to_string(img)
+
+    return text, comment
+
+def extract_objs_from_text(text):
+
+    text = text.replace("\n", " ")
+    print(text)
+
+    word_list = text.split(" ")
+
+    brand_words_on_label = []
+    prod_words_on_label = []
+    alc_percent = ""
+    net_contents = ""
+
+    j = 0
     
-    file_bytes = np.frombuffer(file_obj.read(), np.uint8)
 
-    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    for i in range(len(word_list)):
 
-    # Run OCR
-    results = ocr.ocr(image)
+        if word_list[i].isupper():
 
-    # Extract text
-    text = " ".join([line[1][0] for line in results[0]])
-
-    return text
-
-def validate_form(brand, prod, alc, net, file):
-
-    fail_str = ""
-    brand_nm_list = []
-
-    if not brand:
-
-        fail_str = fail_str + " Brand Name cannot be empty."
-
-    else:
-
-        if len(brand.split(" ")) > 1:
-
-            brand_nm_list = brand.split(" ")
+            brand_words_on_label.append(word_list[i])
 
         else:
 
-            brand_nm_list.append(brand)
+            j = i
+            break
 
-    if not prod:
+    brand_on_label = " ".join(brand_words_on_label).lower()
 
-        fail_str = fail_str + " Product Type cannot be empty."
+    for i in range(j, len(word_list)):
 
-    if not file:
+        if "%" not in word_list[i]:
 
-        fail_str = fail_str + " A picture in appropriate format must be uploaded."
+            prod_words_on_label.append(word_list[i])
 
-    return fail_str, brand_nm_list
+        else:
+
+            j=i
+            break
+
+    prod_on_label = " ".join(prod_words_on_label).lower()
+
+    for c in word_list[j]:
+
+        if c.isnumeric():
+
+            alc_percent += c
+
+    for i in range(j+1, len(word_list)):
+
+        if 'L' in word_list[i]:
+
+            net_contents = word_list[i-1] + word_list[i]
+
+    print(brand_on_label)
+    print(prod_on_label)
+    print(alc_percent)
+    print(net_contents)
+
+    return brand_on_label, prod_on_label, alc_percent, net_contents
 
 
-def validate_labels(brand, prod, alc, net, file):
 
-    fail_str, brand_nm_list = validate_form(brand, prod, alc, net, file)
-    text = ""
+def validate_label(text, b, p, a, n):
 
-    if not fail_str:
+    bl, pl, al, nl = extract_objs_from_text(text)
 
-        try:
+    comment = ""
 
-            text = run_ocr(file)
+    if not b.lower() == bl:
 
-            flag = False
+        comment += "Brand on form does NOT match brand on label.\n"
 
-            for b_nm in brand_nm_list:
+    if not p.lower() == pl:
 
-                if b_nm not in text:
+        comment += "Product on form does NOT match product on label.\n"
 
-                    flag = True
+    if not al.strip() == al:
 
-            if flag:
+        comment += "Alcohol percentage on form does NOT match percentage on label.\n"
 
-                fail_str = fail_str + " Brand name is not in image."
+    if not nl.strip() == nl:
 
-            if prod not in text:
+        comment += "Net contents on form does NOT match net contents on label.\n"
 
-                fail_str = fail_str + " Product type is not in image."
+    if not comment:
 
-            if alc not in text:
-
-                fail_str = fail_str + " Alcohol content is not in image."
-
-            if net not in text:
-
-                fail_str = fail_str + " Net contents is not in image."
-
+        comment = "SUCCESS!" \
     
 
-            if not fail_str:
-
-                fail_str = "success!"
-        
-        except Exception as e:
-
-            fail_str = fail_str + str(e)
-
-    return fail_str, text
-
+    return comment
 
